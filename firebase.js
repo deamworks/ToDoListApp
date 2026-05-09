@@ -424,6 +424,14 @@ function renderTaskList() {
     const statusLabels = t("statusOptions");
     return `
     <div class="task-card">
+
+      <!-- ปุ่มกลมติ๊กซ้าย -->
+      <button
+        class="tick-btn ${isDone ? "ticked" : ""}"
+        onclick="handleToggleComplete('${task.id}', ${isDone})"
+        title="${isDone ? "Mark incomplete" : "Mark complete"}"
+      ><i class="fa-solid fa-check"></i></button>
+
       <div class="task-body">
         <div class="badge-row">
           <span class="badge ${task.status}">${statusLabels[task.status]}</span>
@@ -438,18 +446,23 @@ function renderTaskList() {
           ${t("assignedTo")} ${task.assigned.map((n) => `<span class="assigned-chip">${n.trim()}</span>`).join("")}
         </div>` : ""}
       </div>
+
+      <!-- ปุ่มขวา: status + edit/notify/delete -->
       <div class="task-actions">
         <select class="status-select" onchange="handleStatusChange('${task.id}', this.value)">
           <option value="pending"     ${task.status === "pending"     ? "selected" : ""}>${statusLabels.pending}</option>
           <option value="in_progress" ${task.status === "in_progress" ? "selected" : ""}>${statusLabels.in_progress}</option>
           <option value="completed"   ${task.status === "completed"   ? "selected" : ""}>${statusLabels.completed}</option>
         </select>
-        <button class="action-btn edit"   onclick="handleEditTask('${task.id}')"   title="Edit"><i class="fa-solid fa-pen"></i></button>
-        ${task.assigned?.length > 0
-          ? `<button class="action-btn notify" onclick="handleNotifyEmail('${task.id}')" title="${t('sendEmail')}"><i class="fa-solid fa-envelope"></i></button>`
-          : ""}
-        <button class="action-btn delete" onclick="handleDeleteTask('${task.id}')" title="Delete"><i class="fa-solid fa-trash"></i></button>
+        <div class="action-btn-row">
+          <button class="action-btn edit"   onclick="handleEditTask('${task.id}')"   title="Edit"><i class="fa-solid fa-pen"></i></button>
+          ${task.assigned?.length > 0
+            ? `<button class="action-btn notify" onclick="handleNotifyEmail('${task.id}')" title="${t('sendEmail')}"><i class="fa-solid fa-envelope"></i></button>`
+            : ""}
+          <button class="action-btn delete" onclick="handleDeleteTask('${task.id}')" title="Delete"><i class="fa-solid fa-trash"></i></button>
+        </div>
       </div>
+
     </div>`;
   }).join("");
 }
@@ -597,6 +610,14 @@ window.handleDeleteTask = async (id) => {
   if (!confirm(t("deleteConfirm"))) return;
   await removeTask(id);
   loadTasks(auth.currentUser.uid);
+};
+
+// กดปุ่มกลม → toggle completed ↔ pending
+window.handleToggleComplete = async (id, isDone) => {
+  const newStatus = isDone ? "pending" : "completed";
+  await updateTask(id, { status: newStatus });
+  tasks = tasks.map((task) => (task.id === id ? { ...task, status: newStatus } : task));
+  renderAll();
 };
 
 document.querySelectorAll(".lang-btn").forEach((btn) => {

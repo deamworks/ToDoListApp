@@ -749,43 +749,83 @@ select option {
   margin-left: 4px;
 }
 
-/* Actions (status dropdown + edit + delete) */
-.task-actions {
+/* ปุ่มกลมติ๊กซ้ายมือ */
+.tick-btn {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  font-size: 11px;
+  color: transparent;
+  margin-top: 2px;
+  transition: all 0.2s;
+}
+
+.tick-btn:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.tick-btn.ticked {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+/* Actions: แสดงเป็น column ชิดขวา */
+.task-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .status-select {
   font-size: 12px;
-  padding: 4px 8px;
+  padding: 4px 10px;
   background: var(--surface2);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 20px;
   color: var(--text2);
   cursor: pointer;
   outline: none;
-  max-width: 110px;
+  width: 116px;
+  text-align: center;
+}
+
+/* ปุ่ม edit/notify/delete อยู่แถวเดียวกัน */
+.action-btn-row {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
 }
 
 .action-btn {
   width: 32px;
   height: 32px;
-  background: transparent;
+  background: var(--surface2);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text2);
-  font-size: 14px;
+  font-size: 13px;
+  cursor: pointer;
   transition: all 0.2s;
 }
 
-.action-btn:hover          { background: var(--surface2); }
-.action-btn.edit:hover     { border-color: var(--accent);  color: var(--accent-light); }
-.action-btn.delete:hover   { border-color: var(--red);     color: var(--red); }
+.action-btn:hover        { background: var(--surface); }
+.action-btn.edit:hover   { border-color: var(--accent); color: var(--accent-light); }
+.action-btn.notify:hover { border-color: var(--blue);   color: var(--blue); }
+.action-btn.delete:hover { border-color: var(--red);    color: var(--red); }
 
 
 /* Modal */
@@ -1024,9 +1064,10 @@ textarea.text-input {
 
 /* Responsive (mobile) */
 @media (max-width: 600px) {
-  .input-row     { flex-direction: column; }
-  .task-actions  { flex-direction: column; }
-  .status-select { max-width: 100%; }
+  .input-row  { flex-direction: column; }
+  .auth-card  { padding: 32px 20px; }
 
-  .auth-card     { padding: 32px 20px; }
+  .task-actions    { align-items: flex-end; min-width: 116px; }
+  .status-select   { width: 110px; }
+  .action-btn-row  { justify-content: flex-end; }
 }
