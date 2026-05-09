@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!--AUTH SCREEN -->
+  <div id="auth-screen">
+    <div class="auth-card">
+
+      <div class="auth-logo"><i class="fa-solid fa-check"></i></div>
+      <h1 class="auth-title">TaskFlow</h1>
+      <p class="auth-subtitle" id="auth-subtitle">Welcome back!</p>
+
+      <!-- Display Name (แสดงเฉพาะตอน signup) -->
+      <div class="form-field hidden" id="auth-name-field">
+        <label id="auth-name-label">Display Name</label>
+        <input type="text" id="auth-name" placeholder="Your name" />
+      </div>
+
+      <!-- Email -->
+      <div class="form-field">
+        <label>Email</label>
+        <input type="email" id="auth-email" placeholder="you@email.com" />
+      </div>
+
+      <!-- Password -->
+      <div class="form-field">
+        <label>Password</label>
+        <input type="password" id="auth-password" placeholder="••••••••" />
+      </div>
+
+      <!-- Error message -->
+      <p class="error-msg" id="auth-error"></p>
+
+      <!-- Submit button -->
+      <button class="btn-primary" id="auth-submit-btn">Sign In</button>
+
+      <!-- Switch between login / signup -->
+      <p class="auth-switch">
+        Don't have an account?
+        <span id="auth-mode-toggle">Sign Up</span>
+      </p>
+
+    </div>
+  </div>
+  <!-- END AUTH SCREEN->
+
+
+  <!--  APP SCREEN -->
+  <div id="app-screen" class="hidden">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-logo"><i class="fa-solid fa-check"></i> TaskFlow</div>
+      <div class="header-right">
+        <!-- User avatar + name chip -->
+        <div class="user-chip">
+          <span class="user-avatar" id="user-avatar"></span>
+          <span id="user-display"></span>
+        </div>
+        <!-- Language switcher -->
+        <div class="lang-switcher">
+          <button class="lang-btn active" data-lang="en">EN</button>
+          <button class="lang-btn" data-lang="th">TH</button>
+        </div>
+        <!-- Theme toggle -->
+        <button class="theme-btn" id="btn-theme" title="Toggle theme"><i class="fa-solid fa-moon"></i></button>
+        <button class="btn-icon" id="btn-logout" title="Sign out"><i class="fa-solid fa-sign-out-alt"></i></button>
+      </div>
+    </header>
+
+    <!-- Tab buttons -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-tab="tasks"><i class="fa-solid fa-list-check" style="color: rgb(124, 106, 247);"></i>Tasks</button>
+      <button class="tab-btn" data-tab="dashboard"><i class="fa-solid fa-chart-bar" style="color: rgb(124, 106, 247);"></i>Dashboard</button>
+    </div>
+
+    <main class="main-content">
+
+      <!-- ── TASKS TAB ── -->
+      <div id="tab-tasks">
+
+        <!-- Stats row (pending / in progress / completed counts) -->
+        <div class="stats-row" id="stats-row"></div>
+
+        <!-- Search + filters + add button -->
+        <div class="filter-row">
+          <div class="search-box">
+            <span class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+            <input type="text" id="search-input" placeholder="Search tasks..." />
+          </div>
+          <select id="filter-status">
+            <option value="all">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+          </select>
+          <select id="filter-category">
+            <option value="all">All Categories</option>
+            <option>Work</option>
+            <option>Personal</option>
+            <option>Study</option>
+            <option>Health</option>
+            <option>Other</option>
+          </select>
+          <button class="btn-add" id="btn-open-modal">+ Add Task</button>
+        </div>
+
+        <!-- Task cards will be injected here by JS -->
+        <div class="task-list" id="task-list"></div>
+
+      </div>
+      <!-- ── END TASKS TAB ── -->
+
+
+      <!-- ── DASHBOARD TAB ── -->
+      <div id="tab-dashboard" class="hidden">
+        <div class="dash-stat-grid" id="dash-stat-grid"></div>
+        <div class="dash-section">
+          <h3>Tasks by Category</h3>
+          <div id="dash-category-bars"></div>
+        </div>
+        <div id="dash-overdue-section"></div>
+      </div>
+      <!-- ── END DASHBOARD TAB ── -->
+
+    </main>
+  </div>
+  <!-- ==================== END APP SCREEN ==================== -->
+
+
+  <!-- ==================== TASK MODAL ==================== -->
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal">
+
+      <div class="modal-header">
+        <h2 id="modal-title">New Task</h2>
+        <button class="btn-icon" id="modal-close-btn">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <label class="input-label" data-i18n="titleLabel">Title *</label>
+        <input class="text-input" type="text" id="field-title" placeholder="Task title" />
+
+        <label class="input-label" data-i18n="descLabel">Description</label>
+        <textarea class="text-input" id="field-description" placeholder="Optional description"></textarea>
+
+        <div class="input-row">
+          <div>
+            <label class="input-label" data-i18n="categoryLabel">Category</label>
+            <select class="text-input" id="field-category">
+              <option>Work</option>
+              <option>Personal</option>
+              <option>Study</option>
+              <option>Health</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="input-label" data-i18n="statusLabel">Status</label>
+            <select class="text-input" id="field-status">
+              <option value="pending">Pending</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Due date + time side by side -->
+        <div class="input-row">
+          <div>
+            <label class="input-label" data-i18n="dueDateLabel">Due Date</label>
+            <input class="text-input" type="date" id="field-due-date" />
+          </div>
+          <div>
+            <label class="input-label" data-i18n="dueTimeLabel">Due Time</label>
+            <input class="text-input" type="time" id="field-due-time" />
+          </div>
+        </div>
+
+        <!-- Assigned users (comma-separated names or emails) -->
+        <label class="input-label">
+          <span data-i18n="assignLabel">Assign To</span>
+          <span class="label-hint" data-i18n="assignHint">(comma separated)</span>
+        </label>
+        <input class="text-input" type="text" id="field-assigned" placeholder="e.g. Alice, Bob" />
+
+        <div class="modal-actions">
+          <button class="btn-cancel" id="modal-cancel-btn" data-i18n="cancel">Cancel</button>
+          <button class="btn-primary" id="modal-save-btn">Add Task</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- ==================== END TASK MODAL ==================== -->
+
+
+  <!-- Firebase SDK (loaded as ES module) -->
+  <script type="module" src="firebase.js"></script>
+
+</body>
+</html>
