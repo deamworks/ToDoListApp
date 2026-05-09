@@ -114,8 +114,9 @@
 
     <!-- Tab buttons -->
     <div class="tabs-bar">
-      <button class="tab-btn active" data-tab="tasks"><i class="fa-solid fa-list-check" style="color: rgb(124, 106, 247);"></i>Tasks</button>
-      <button class="tab-btn" data-tab="dashboard"><i class="fa-solid fa-chart-bar" style="color: rgb(124, 106, 247);"></i>Dashboard</button>
+      <button class="tab-btn active" data-tab="tasks"><i class="fa-solid fa-list-check"></i> Tasks</button>
+      <button class="tab-btn" data-tab="calendar"><i class="fa-solid fa-calendar-days"></i> Calendar</button>
+      <button class="tab-btn" data-tab="dashboard"><i class="fa-solid fa-chart-bar"></i> Dashboard</button>
     </div>
 
     <main class="main-content">
@@ -160,12 +161,42 @@
       <div id="tab-dashboard" class="hidden">
         <div class="dash-stat-grid" id="dash-stat-grid"></div>
         <div class="dash-section">
-          <h3>Tasks by Category</h3>
+          <h3 data-i18n="tasksByCategory">Tasks by Category</h3>
           <div id="dash-category-bars"></div>
         </div>
         <div id="dash-overdue-section"></div>
       </div>
-      <!-- ── END DASHBOARD TAB ── -->
+
+      <!-- CALENDAR TAB -->
+      <div id="tab-calendar" class="hidden">
+
+        <!-- Calendar header: prev / title / next + view toggle -->
+        <div class="cal-header">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" id="cal-prev"><i class="fa-solid fa-chevron-left"></i></button>
+            <h2 class="cal-title" id="cal-title"></h2>
+            <button class="cal-nav-btn" id="cal-next"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+          <div class="cal-view-toggle">
+            <button class="cal-view-btn active" id="btn-month-view"><i class="fa-solid fa-calendar"></i> Month</button>
+            <button class="cal-view-btn" id="btn-week-view"><i class="fa-solid fa-calendar-week"></i> Week</button>
+          </div>
+        </div>
+
+        <!-- Calendar grid injected by JS -->
+        <div id="cal-grid"></div>
+
+        <!-- Task detail popup (กดวันแล้วแสดง task) -->
+        <div class="cal-popup hidden" id="cal-popup">
+          <div class="cal-popup-header">
+            <span id="cal-popup-date"></span>
+            <button class="btn-icon" id="cal-popup-close">✕</button>
+          </div>
+          <div id="cal-popup-tasks"></div>
+        </div>
+
+      </div>
+      <!-- END CALENDAR TAB -->
 
     </main>
   </div>
