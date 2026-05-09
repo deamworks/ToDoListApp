@@ -19,7 +19,7 @@ const CATEGORIES = ["Work", "Personal", "Study", "Health", "Other"];
 const WEEKDAYS   = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const MONTHS     = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-// ─── Translations ─────────────────────────────────────────────────────────────
+// Translations 
 const TR = {
   en: {
     welcomeBack: "Welcome back!", createAccount: "Create your account",
@@ -235,65 +235,18 @@ const submitAuth = async () => {
   const pw    = $("auth-password").value;
   const errEl = $("auth-error");
   errEl.textContent = "";
-
-  // ── Client-side validation ──────────────────────────────
-  if (!email) {
-    errEl.textContent = lang === "th" ? "กรุณาใส่อีเมล" : "Please enter your email."; return;
-  }
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  if (!emailOk) {
-    errEl.textContent = lang === "th" ? "รูปแบบอีเมลไม่ถูกต้อง เช่น name@email.com" : "Invalid email format. Example: name@email.com"; return;
-  }
-  if (!pw) {
-    errEl.textContent = lang === "th" ? "กรุณาใส่รหัสผ่าน" : "Please enter your password."; return;
-  }
-
-  // ── Signup extra validation ─────────────────────────────
-  if (authMode === "signup") {
-    const name = $("auth-name").value.trim();
-    if (!name) { errEl.textContent = t("nameRequired"); return; }
-    if (checkPassword(pw).score < 4) { errEl.textContent = t("passwordWeak"); return; }
-  }
-
-  // ── Firebase error → friendly message ──────────────────
-  const friendlyError = (code) => {
-    const map = {
-      en: {
-        "auth/invalid-email":           "Invalid email format. Example: name@email.com",
-        "auth/user-not-found":          "No account found with this email. Please sign up first.",
-        "auth/wrong-password":          "Incorrect password. Please try again.",
-        "auth/invalid-credential":      "Incorrect email or password. Please check and try again.",
-        "auth/email-already-in-use":    "This email is already registered. Please sign in instead.",
-        "auth/weak-password":           "Password is too weak. Please choose a stronger one.",
-        "auth/too-many-requests":       "Too many failed attempts. Please wait a moment and try again.",
-        "auth/network-request-failed":  "No internet connection. Please check your network.",
-        "auth/user-disabled":           "This account has been disabled. Please contact support.",
-      },
-      th: {
-        "auth/invalid-email":           "รูปแบบอีเมลไม่ถูกต้อง เช่น name@email.com",
-        "auth/user-not-found":          "ไม่พบบัญชีนี้ในระบบ กรุณาสมัครสมาชิกก่อน",
-        "auth/wrong-password":          "รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง",
-        "auth/invalid-credential":      "อีเมลหรือรหัสผ่านไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง",
-        "auth/email-already-in-use":    "อีเมลนี้ถูกสมัครไว้แล้ว กรุณาเข้าสู่ระบบแทน",
-        "auth/weak-password":           "รหัสผ่านไม่ปลอดภัยเพียงพอ กรุณาเลือกรหัสที่แข็งแกร่งกว่านี้",
-        "auth/too-many-requests":       "ลองเข้าสู่ระบบบ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่",
-        "auth/network-request-failed":  "ไม่มีการเชื่อมต่ออินเทอร์เน็ต กรุณาตรวจสอบเครือข่าย",
-        "auth/user-disabled":           "บัญชีนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ดูแลระบบ",
-      }
-    };
-    return map[lang]?.[code] || (lang === "th" ? "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง" : "Something went wrong. Please try again.");
-  };
-
   try {
     if (authMode === "login") {
       await signInWithEmailAndPassword(auth, email, pw);
     } else {
       const name = $("auth-name").value.trim();
+      if (!name)                        { errEl.textContent = t("nameRequired");  return; }
+      if (checkPassword(pw).score < 4)  { errEl.textContent = t("passwordWeak");  return; }
       const { user } = await createUserWithEmailAndPassword(auth, email, pw);
       await saveUserProfile(user.uid, name, email);
     }
   } catch (err) {
-    errEl.textContent = friendlyError(err.code || "");
+    errEl.textContent = err.message.replace("Firebase: ","").replace(/\(.*\)/,"").trim();
   }
 };
 
@@ -369,7 +322,7 @@ const renderTaskList = () => {
       <div class="task-body">
         <div class="badge-row">
           <span class="badge ${task.status}">${so[task.status]}</span>
-          <span class="badge category"><i class="fa-solid fa-tag"></i> ${task.category}</span>
+          <span class="badge category"><i class="fa-solid fa-tag"></i> ${t("categories")[task.category] || task.category}</span>
         </div>
         <div class="task-title ${isDone?"done":""}">${task.title}</div>
         ${task.description ? `<div class="task-description">${task.description}</div>` : ""}
@@ -504,7 +457,7 @@ window.calShowPopup = (dateStr) => {
   $("cal-popup").classList.remove("hidden");
 };
 
-// ─── Window handlers ──────────────────────────────────────────────────────────
+// Window handlers 
 window.handleToggleComplete = async (id, isDone) => {
   const newStatus = isDone ? "pending" : "completed";
   await updateTask(id, { status:newStatus });
@@ -525,7 +478,7 @@ window.handleDeleteTask  = async (id) => {
   loadTasks(auth.currentUser.uid);
 };
 
-// ─── Event Listeners ──────────────────────────────────────────────────────────
+// Event Listeners 
 $("auth-submit-btn").addEventListener("click", submitAuth);
 $("auth-mode-toggle").addEventListener("click", switchAuthMode);
 $("btn-logout").addEventListener("click", () => signOut(auth));
