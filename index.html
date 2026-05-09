@@ -24,19 +24,40 @@
       <!-- Display Name (แสดงเฉพาะตอน signup) -->
       <div class="form-field hidden" id="auth-name-field">
         <label id="auth-name-label">Display Name</label>
-        <input type="text" id="auth-name" placeholder="Your name" />
+        <input type="text" id="auth-name" placeholder="Enter your name" />
       </div>
 
       <!-- Email -->
       <div class="form-field">
         <label>Email</label>
-        <input type="email" id="auth-email" placeholder="you@email.com" />
+        <input type="email" id="auth-email" placeholder="Enter your email" />
       </div>
 
       <!-- Password -->
       <div class="form-field">
-        <label>Password</label>
-        <input type="password" id="auth-password" placeholder="••••••••" />
+        <label id="auth-password-label">Password</label>
+        <div class="password-wrapper">
+          <input type="password" id="auth-password" placeholder="••••••••" />
+          <button type="button" class="btn-eye" id="btn-toggle-password" title="Show/Hide password" tabindex="-1">
+            <i class="fa-solid fa-eye" id="eye-icon"></i>
+          </button>
+        </div>
+        <!-- Password strength (signup only) -->
+        <div class="pw-strength hidden" id="pw-strength-box">
+          <div class="pw-strength-bar">
+            <div class="pw-strength-fill" id="pw-strength-fill"></div>
+          </div>
+          <div class="pw-strength-row">
+            <span class="pw-strength-label" id="pw-strength-label"></span>
+            <div class="pw-rules" id="pw-rules">
+              <span class="pw-rule" id="rule-len"><i class="fa-solid fa-circle-check"></i> 8+ ตัวอักษร</span>
+              <span class="pw-rule" id="rule-upper"><i class="fa-solid fa-circle-check"></i> ตัวพิมพ์ใหญ่</span>
+              <span class="pw-rule" id="rule-lower"><i class="fa-solid fa-circle-check"></i> ตัวพิมพ์เล็ก</span>
+              <span class="pw-rule" id="rule-num"><i class="fa-solid fa-circle-check"></i> ตัวเลข</span>
+              <span class="pw-rule" id="rule-special"><i class="fa-solid fa-circle-check"></i> อักขระพิเศษ</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Error message -->

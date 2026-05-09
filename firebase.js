@@ -33,10 +33,11 @@ const TRANSLATIONS = {
   en: {
     appName: "TaskFlow",
     welcomeBack: "Welcome back!", createAccount: "Create your account",
-    emailPlaceholder: "you@email.com", passwordPlaceholder: "••••••••",
+    emailPlaceholder: "Enter your email", passwordPlaceholder: "••••••••",
     signIn: "Sign In", signUp: "Sign Up",
     noAccount: "Don't have an account?", haveAccount: "Already have an account?",
-    displayNameLabel: "Display Name", displayNamePlaceholder: "Your name",
+    displayNameLabel: "Display Name", displayNamePlaceholder: "Enter your name",
+    passwordLabel: "Password",
     tasksTab: '<i class="fa-solid fa-clipboard-list"></i> Tasks',
     dashboardTab: '<i class="fa-solid fa-chart-bar"></i> Dashboard',
     pending: "Pending", inProgress: "In Progress", completed: "Completed",
@@ -54,6 +55,7 @@ const TRANSLATIONS = {
     deleteConfirm: "Delete this task?",
     titleRequired: "Please enter a task title!",
     nameRequired: "Please enter your display name!",
+    passwordWeak: "Password must include uppercase, lowercase, number, and a special character (min 8 chars).",
     sendEmail: 'Notify', emailSending: "Sending...",
     emailSuccess: "Email sent successfully!",
     emailFail: "Failed to send email. Please try again.",
@@ -70,6 +72,7 @@ const TRANSLATIONS = {
     signIn: "เข้าสู่ระบบ", signUp: "สมัครสมาชิก",
     noAccount: "ยังไม่มีบัญชี?", haveAccount: "มีบัญชีอยู่แล้ว?",
     displayNameLabel: "ชื่อที่แสดง", displayNamePlaceholder: "ชื่อของคุณ",
+    passwordLabel: "รหัสผ่าน",
     tasksTab: '<i class="fa-solid fa-clipboard-list"></i> งาน', dashboardTab: '<i class="fa-solid fa-chart-bar"></i> ภาพรวม',
     pending: "รอดำเนินการ", inProgress: "กำลังทำ", completed: "เสร็จแล้ว",
     searchPlaceholder: "ค้นหางาน...", allStatus: "ทุกสถานะ",
@@ -86,6 +89,7 @@ const TRANSLATIONS = {
     deleteConfirm: "ต้องการลบงานนี้ใช่ไหม?",
     titleRequired: "กรุณาใส่ชื่องาน!",
     nameRequired: "กรุณาใส่ชื่อของคุณ!",
+    passwordWeak: "รหัสผ่านต้องมีตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก ตัวเลข และอักขระพิเศษ (อย่างน้อย 8 ตัว)",
     sendEmail: 'แจ้งเตือน', emailSending: "กำลังส่ง...",
     emailSuccess: "ส่งอีเมลสำเร็จ!",
     emailFail: "ส่งอีเมลไม่สำเร็จ กรุณาลองใหม่",
@@ -133,6 +137,67 @@ async function fetchUserProfile(uid) {
   const snap = await getDoc(doc(db, "users", uid));
   return snap.exists() ? snap.data() : null;
 }
+
+// Password strength checker
+function checkPasswordStrength(password) {
+  const rules = {
+    len:     password.length >= 8,
+    upper:   /[A-Z]/.test(password),
+    lower:   /[a-z]/.test(password),
+    num:     /[0-9]/.test(password),
+    special: /[^A-Za-z0-9]/.test(password),
+  };
+  const score = Object.values(rules).filter(Boolean).length;
+  return { rules, score };
+}
+
+function updateStrengthUI(password) {
+  const box = document.getElementById("pw-strength-box");
+  if (!box) return;
+
+  const { rules, score } = checkPasswordStrength(password);
+  const fill  = document.getElementById("pw-strength-fill");
+  const label = document.getElementById("pw-strength-label");
+
+  // Map rules to DOM
+  const ruleMap = { len: "rule-len", upper: "rule-upper", lower: "rule-lower", num: "rule-num", special: "rule-special" };
+  Object.entries(rules).forEach(([key, passed]) => {
+    document.getElementById(ruleMap[key])?.classList.toggle("ok", passed);
+  });
+
+  const levels = [
+    { pct: "0%",   color: "transparent",  text: "" },
+    { pct: "20%",  color: "#f87171",       text: lang === "th" ? "อ่อนมาก" : "Very Weak" },
+    { pct: "40%",  color: "#fb923c",       text: lang === "th" ? "อ่อน"    : "Weak" },
+    { pct: "60%",  color: "#fbbf24",       text: lang === "th" ? "พอใช้"   : "Fair" },
+    { pct: "80%",  color: "#34d399",       text: lang === "th" ? "ดี"      : "Good" },
+    { pct: "100%", color: "#10b981",       text: lang === "th" ? "แข็งแกร่ง" : "Strong" },
+  ];
+  const lv = levels[score];
+  fill.style.width      = password.length ? lv.pct : "0%";
+  fill.style.background = lv.color;
+  label.textContent     = password.length ? lv.text : "";
+  label.style.color     = lv.color;
+}
+
+// Eye toggle init
+function initEyeToggle() {
+  const btn   = document.getElementById("btn-toggle-password");
+  const input = document.getElementById("auth-password");
+  const icon  = document.getElementById("eye-icon");
+  if (!btn || !input) return;
+  btn.onclick = () => {
+    const isHidden = input.type === "password";
+    input.type     = isHidden ? "text" : "password";
+    icon.className = isHidden ? "fa-solid fa-eye-slash" : "fa-solid fa-eye";
+  };
+  // strength bar on input
+  input.addEventListener("input", () => {
+    if (authMode === "signup") updateStrengthUI(input.value);
+  });
+}
+
+initEyeToggle();
 
 // ส่งอีเมลผ่าน EmailJS REST API — templateParams ต้องตรงกับ template ใน EmailJS dashboard
 async function sendEmailViaEmailJS(task, subject, toEmail) {
@@ -185,6 +250,7 @@ function applyTranslations() {
   document.getElementById("auth-subtitle").textContent   = isLogin ? t("welcomeBack") : t("createAccount");
   document.getElementById("auth-email").placeholder      = t("emailPlaceholder");
   document.getElementById("auth-password").placeholder   = t("passwordPlaceholder");
+  document.getElementById("auth-password-label") && (document.getElementById("auth-password-label").textContent = t("passwordLabel"));
   document.getElementById("auth-submit-btn").textContent = isLogin ? t("signIn") : t("signUp");
   document.querySelector(".auth-switch").innerHTML = isLogin
     ? `${t("noAccount")} <span id="auth-mode-toggle">${t("signUp")}</span>`
@@ -194,6 +260,32 @@ function applyTranslations() {
   document.getElementById("auth-name-field").classList.toggle("hidden", isLogin);
   document.getElementById("auth-name-label").textContent = t("displayNameLabel");
   document.getElementById("auth-name").placeholder       = t("displayNamePlaceholder");
+
+  // Show/hide strength bar
+  const strengthBox = document.getElementById("pw-strength-box");
+  if (strengthBox) strengthBox.classList.toggle("hidden", isLogin);
+
+  // Update pw-rule labels by language
+  const ruleLabels = {
+    "rule-len":     lang === "th" ? "8+ ตัวอักษร"    : "8+ chars",
+    "rule-upper":   lang === "th" ? "ตัวพิมพ์ใหญ่"    : "Uppercase",
+    "rule-lower":   lang === "th" ? "ตัวพิมพ์เล็ก"    : "Lowercase",
+    "rule-num":     lang === "th" ? "ตัวเลข"          : "Number",
+    "rule-special": lang === "th" ? "อักขระพิเศษ"     : "Special char",
+  };
+  Object.entries(ruleLabels).forEach(([id, label]) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${label}`;
+  });
+
+  // Reset strength UI when switching back to login
+  if (isLogin) {
+    const fill  = document.getElementById("pw-strength-fill");
+    const lbl   = document.getElementById("pw-strength-label");
+    if (fill) { fill.style.width = "0%"; fill.style.background = "transparent"; }
+    if (lbl)  lbl.textContent = "";
+    document.querySelectorAll(".pw-rule").forEach(r => r.classList.remove("ok"));
+  }
 
   document.querySelector('[data-tab="tasks"]').innerHTML     = t("tasksTab");
   document.querySelector('[data-tab="dashboard"]').innerHTML = t("dashboardTab");
@@ -236,6 +328,12 @@ async function submitAuth() {
     } else {
       const displayName = document.getElementById("auth-name").value.trim();
       if (!displayName) { errorEl.textContent = t("nameRequired"); return; }
+      // Validate password strength
+      const { rules, score } = checkPasswordStrength(password);
+      if (score < 4) {
+        errorEl.textContent = t("passwordWeak");
+        return;
+      }
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
       await saveUserProfile(user.uid, displayName, email);
     }
