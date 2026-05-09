@@ -103,6 +103,17 @@ textarea {
 }
 
 
+/* Auth top bar (lang + theme on login page) */
+.auth-topbar {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+}
+
 /* Auth Screen*/
 #auth-screen {
   min-height: 100vh;

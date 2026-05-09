@@ -231,8 +231,13 @@ function switchTheme(newTheme) {
   theme = newTheme;
   localStorage.setItem("taskflow-theme", theme);
   document.documentElement.classList.toggle("light", theme === "light");
-  const btn = document.getElementById("btn-theme");
-  if (btn) btn.innerHTML = theme === "light" ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun" style="color: rgb(152, 150, 176);"></i>';
+  const icon = theme === "light"
+    ? '<i class="fa-solid fa-moon"></i>'
+    : '<i class="fa-solid fa-sun" style="color: rgb(152, 150, 176);"></i>';
+  const btn      = document.getElementById("btn-theme");
+  const authBtn  = document.getElementById("auth-btn-theme");
+  if (btn)     btn.innerHTML     = icon;
+  if (authBtn) authBtn.innerHTML = icon;
 }
 
 function switchLanguage(newLang) {
@@ -599,6 +604,11 @@ document.querySelectorAll(".lang-btn").forEach((btn) => {
 });
 
 document.getElementById("btn-theme").addEventListener("click", () => {
+  switchTheme(theme === "dark" ? "light" : "dark");
+});
+
+// Auth screen controls
+document.getElementById("auth-btn-theme").addEventListener("click", () => {
   switchTheme(theme === "dark" ? "light" : "dark");
 });
 
