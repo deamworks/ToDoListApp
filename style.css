@@ -1,23 +1,5 @@
-/* ============================================================
-   style.css — TaskFlow
-   Sections:
-   1. CSS Variables (design tokens)
-   2. Reset & Base
-   3. Utility classes
-   4. Auth Screen
-   5. Header
-   6. Tabs
-   7. Stats Row
-   8. Filter Row
-   9. Task Cards
-   10. Modal
-   11. Dashboard
-   12. Responsive (mobile)
-   ============================================================ */
 
-
-/* ── 1. CSS Variables ─────────────────────────────────────── */
-
+/* CSS Variables*/
 /* Dark mode (default) */
 :root {
   /* Colors */
@@ -39,8 +21,7 @@
   --radius:    14px;
   --radius-sm:  8px;
 
-  /* Fonts: Sarabun รองรับภาษาไทย, Google Sans รองรับภาษาอังกฤษ
-     Browser เลือกฟอนต์อัตโนมัติตาม charset ของตัวอักษร */
+  /* Fonts: Sarabun รองรับภาษาไทย, Google Sans รองรับภาษาอังกฤษ */
   --font-body: 'Sarabun', 'Google Sans', sans-serif;
   --font-mono: monospace;
 }
@@ -68,7 +49,7 @@
 }
 
 
-/* ── 2. Reset & Base ──────────────────────────────────────── */
+/* 2. Reset & Base */
 *,
 *::before,
 *::after {
@@ -101,7 +82,7 @@ textarea {
 }
 
 
-/* ── 3. Utility Classes ───────────────────────────────────── */
+/* Utility Classes */
 .hidden {
   display: none !important;
 }
@@ -123,7 +104,7 @@ textarea {
 }
 
 
-/* ── 4. Auth Screen ───────────────────────────────────────── */
+/* Auth Screen*/
 #auth-screen {
   min-height: 100vh;
   display: flex;
@@ -248,7 +229,7 @@ textarea {
 }
 
 
-/* ── 5. Header ────────────────────────────────────────────── */
+/* Header */
 .header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -353,7 +334,7 @@ textarea {
   color: var(--text);
 }
 
-/* Theme toggle button (🌙 / ☀️) */
+/* Theme toggle button */
 .theme-btn {
   width: 36px;
   height: 36px;
@@ -378,7 +359,7 @@ textarea {
 }
 
 
-/* ── 6. Tabs ──────────────────────────────────────────────── */
+/*  Tabs*/
 .tabs-bar {
   display: flex;
   gap: 4px;
@@ -411,7 +392,7 @@ textarea {
 }
 
 
-/* ── 7. Stats Row ─────────────────────────────────────────── */
+/* Stats Row ─ */
 .stats-row {
   display: flex;
   gap: 8px;
@@ -435,7 +416,7 @@ textarea {
 .stat-chip.completed  { background: #34d39915; color: var(--green);  border-color: #34d39930; }
 
 
-/* ── 8. Filter Row ────────────────────────────────────────── */
+/* Filter Row*/
 .filter-row {
   display: flex;
   gap: 8px;
@@ -509,7 +490,7 @@ select option {
 .btn-add:hover { opacity: 0.9; }
 
 
-/* ── 9. Task Cards ────────────────────────────────────────── */
+/* Task Cards  */
 .task-list {
   display: flex;
   flex-direction: column;
@@ -688,7 +669,7 @@ select option {
 .action-btn.delete:hover   { border-color: var(--red);     color: var(--red); }
 
 
-/* ── 10. Modal ────────────────────────────────────────────── */
+/* Modal */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -748,6 +729,11 @@ select option {
   outline: none;
   width: 100%;
   transition: border-color 0.2s;
+  color-scheme: dark;
+}
+
+:root.light .text-input {
+  color-scheme: light;
 }
 
 .text-input:focus {
@@ -808,7 +794,7 @@ textarea.text-input {
 }
 
 
-/* ── 11. Dashboard ────────────────────────────────────────── */
+/* Dashboard */
 .dash-stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -917,7 +903,7 @@ textarea.text-input {
 }
 
 
-/* ── 12. Responsive (mobile) ──────────────────────────────── */
+/* Responsive (mobile) */
 @media (max-width: 600px) {
   .input-row     { flex-direction: column; }
   .task-actions  { flex-direction: column; }

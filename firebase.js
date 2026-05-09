@@ -6,7 +6,6 @@ import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, updateDoc, d
 
 
 // Config
-
 const firebaseConfig = {
   apiKey:            "AIzaSyCtwi-GyB2NU7y_ouvpnzdSJDzbTmzAhe4",
   authDomain:        "todolistapp-e75da.firebaseapp.com",
@@ -20,7 +19,7 @@ const firebaseApp = initializeApp(firebaseConfig);
 const auth        = getAuth(firebaseApp);
 const db          = getFirestore(firebaseApp);
 
-// EmailJS — ได้จาก https://www.emailjs.com → Account → API Keys
+// EmailJS 
 const EMAILJS_SERVICE_ID  = "service_j2nsi9q";
 const EMAILJS_TEMPLATE_ID = "template_9lau9oj";
 const EMAILJS_PUBLIC_KEY  = "LXu2-8id6SJ_ESIe-";
@@ -168,7 +167,7 @@ function switchTheme(newTheme) {
   localStorage.setItem("taskflow-theme", theme);
   document.documentElement.classList.toggle("light", theme === "light");
   const btn = document.getElementById("btn-theme");
-  if (btn) btn.innerHTML = theme === "light" ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
+  if (btn) btn.innerHTML = theme === "light" ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun" style="color: rgb(152, 150, 176);"></i>';
 }
 
 function switchLanguage(newLang) {
